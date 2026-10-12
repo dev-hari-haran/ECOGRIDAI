@@ -1,0 +1,69 @@
+{
+  "version": "1.0.0",
+  "created_at": "2026-10-12 00:28:16",
+  "author": "EcoGridAI Operator",
+  "description": "Custom IEEE 33-Bus Microgrid Configuration",
+  "bus_ratings": [
+    {
+      "type": "PV",
+      "bus": 13,
+      "rating_kw": 851.5,
+      "label": "PV_Bus13"
+    },
+    {
+      "type": "PV",
+      "bus": 30,
+      "rating_kw": 1157.6,
+      "label": "PV_Bus30"
+    },
+    {
+      "type": "Wind",
+      "bus": 6,
+      "rating_kw": 2097.97,
+      "label": "Wind_Bus6"
+    }
+  ],
+  "system_capacities": {
+    "total_pv_kw": 2009.1,
+    "total_wind_kw": 2097.97,
+    "pv_buses": [
+      13,
+      30
+    ],
+    "wind_buses": [
+      6
+    ]
+  },
+  "load_profile": {
+    "hourly_load_kw": [
+      2154.7,
+      2006.1,
+      1931.8,
+      1857.5,
+      1968.95,
+      2303.3,
+      2786.25,
+      3269.2,
+      3492.1,
+      3640.7,
+      3715.0,
+      3566.4,
+      3417.8,
+      3343.5,
+      3417.8,
+      3529.25,
+      3640.7,
+      3603.55,
+      3454.95,
+      3269.2,
+      3046.3,
+      2823.4,
+      2526.2,
+      2303.3
+    ],
+    "peak_load_kw": 3715.0,
+    "min_load_kw": 1857.5,
+    "total_load_kwh": 71067.95,
+    "load_factor": 0.7971
+  }
+}

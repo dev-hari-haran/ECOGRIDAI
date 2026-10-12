@@ -1,0 +1,72 @@
+[DAY 1 - TASK 1 - STEP 1] Setup complete:
+- Verified Plotly and Streamlit installations.
+- Created dashboard/ package and __init__.py.
+- Verified results.json and Resource_optimizer_real/results_real.json exist, are readable, and each contains 10 scenarios.
+
+[DAY 1 - TASK 1 - STEPS 2-12] Streamlit Dashboard Implementation & UI Audit:
+- Built modern dark-themed interactive Streamlit dashboard in dashboard/app.py.
+- Implemented dashboard/data_service.py with multi-pipeline (Synthetic & Real 33-Bus) and multi-weighting (Baseline & Shannon Entropy) data loaders.
+- Implemented dashboard/components.py with unified dark styling (#0F172A / #1E293B) and Plotly interactive figures:
+  * 10-Scenario Grouped Bar Chart (ABC Emerald #10B981 vs PSO Electric Cyan #0288D1).
+  * 24-Hour Stacked Energy Dispatch Area Chart (Solar, Wind, Battery, Grid vs. Load Demand).
+  * Metaheuristic Convergence Iteration Curves with 95% threshold markers.
+  * Capital vs. Operational Cost Breakdown Stacked Bar Chart.
+  * 24-Hour Battery State-of-Charge (SOC %) Trajectory Curve.
+- Implemented 5 Top-Level KPI Metric Cards with comparative delta badges and automated winner badges: Best Fitness (F), Total Daily Cost (₹), Load Satisfaction (%), Renewable Utilization (%), Convergence Speed (iterations).
+- Integrated 4 Navigation Tabs:
+  * Tab 1: Scenario Analytics & Dispatch (interactive ABC vs PSO toggle, hourly dispatch, convergence, cost breakdown, head-to-head table).
+  * Tab 2: 10-Scenario Global Benchmark (metric dropdown, cross-scenario bar charts, summary matrix).
+  * Tab 3: Capacity Recommendations (autonomous deficit analysis & expansion interventions).
+  * Tab 4: Data Export Center (CSV scenario metrics download, 10-scenario suite CSV download, PNG chart export guidance).
+[DAY 1 - TASK 2 - STEPS 1-7] Custom Data Input & Validation Engine:
+- Created Resource_optimizer_real/data_input/ package with __init__.py.
+- Implemented Resource_optimizer_real/data_input/validator.py:
+  * validate_bus_ratings: verifies buses 1-33, ratings 0-10,000 kW, no duplicates, type checking (PV/Wind).
+  * validate_load_profile: verifies 24 hourly rows, all positive (>0), peak load > 100 kW, load factor check.
+  * validate_csv_columns: checks required columns and handles null imputation.
+  * Rigorous error taxonomy logging with field names and specific error rationales.
+- Implemented Resource_optimizer_real/data_input/input_form.py:
+  * synthesize_diurnal_load_profile: generates 24-hr diurnal profiles scaled to peak kW.
+  * format_profile_ascii_table: CP1252-safe ASCII terminal distribution visualization.
+  * load_profile_from_csv: parses external CSV load curves.
+  * build_custom_configuration, save_custom_config, load_custom_config: schema packaging and persistence.
+- Verified validator against negative test cases (out-of-range bus 35, negative rating -50 kW, duplicate bus 13, 20-hr load profile, low peak < 100 kW) with 100% rejection accuracy.
+- Persisted validated baseline parameters to Resource_optimizer_real/custom_config.json.
+- Integrated USE_CUSTOM_INPUT = False toggle in Resource_optimizer_real/main_real.py with automatic fallback.
+
+[DAY 2 - TASK 3 - STEPS 1-8] Capacity Recommendation Engine:
+- Created Resource_optimizer_real/recommendation/ package with __init__.py.
+- Implemented Resource_optimizer_real/recommendation/cost_model.py:
+  * Capital expenditure rates: Solar PV (₹50k/kW), Wind (₹60k/kW), Battery Storage (₹15k/kWh), Grid (₹5k/kW).
+  * 20-Year amortized daily cost calculation over 7,300 days (20 years x 365 days).
+  * Cost-effectiveness index Phi = CapEx / additional kW served.
+  * Priority classification: RECOMMENDED (Phi <= 50k), ALTERNATIVE (50k < Phi <= 80k), EXPENSIVE (Phi > 80k).
+- Implemented Resource_optimizer_real/recommendation/engine.py:
+  * analyze_load_gap: calculates unmet energy deficit, peak kW gap, load satisfaction, and critical deficit hours.
+  * recommend_pv: calculates available headroom on existing Bus 13 and Bus 30 arrays, and sizes supplementary PV on low-loss Candidate Bus 18.
+  * recommend_battery: sizes BESS storage with 20% resilience safety margin (1.2x) and 10% inverter headroom (1.1x).
+  * recommend_grid: sizes substation interconnection expansion (1.1x) for commercial/industrial shortfall mitigation.
+  * generate_full_report: produces cross-scenario analysis and executive investment summary.
+  * save_recommendations: persists structured JSON to Resource_optimizer_real/recommendations.json and executive report to Resource_optimizer_real/recommendations.txt.
+- Integrated Phase 5 into Resource_optimizer_real/main_real.py to automatically execute recommendations post-optimization.
+- Integrated recommendations live into Tab 3 ("Capacity Recommendations") and Tab 4 ("Data Export Center") of the Streamlit dashboard.
+
+[ENTROPY WEIGHTS ENHANCEMENT - FIX 1 & FIX 2]:
+- FIX 1: Updated main.py and Resource_optimizer_real/main_real.py to inject abc_weights, pso_weights, and weight_method='shannon_entropy' into each scenario result dictionary after computing entropy weights.
+- FIX 2: Verified curtailment_kwh values across all 10 scenarios in results_real.json. Curtailment is present in all scenarios (not MISSING), with 0.0 in low renewable/stress scenarios and peak values (~19,948 kWh ABC / ~18,773 kWh PSO) in High Renewable Surplus.
+
+[REAL DATA PIPELINE ROOT CONSOLIDATION]:
+- Archived all synthetic prototype files into _synthetic_archive/ (dispatch_simulation.py, plot_results.py, results.json, results_entropy.json, Plot/ directory, and synthetic optimizers).
+- Removed all synthetic files from the root directory.
+- Moved all real data files, models, packages, and outputs from Resource_optimizer_real/ into the main root workspace:
+  * Core scripts: real_data_loader.py, bus_network.py, dispatch_simulation_real.py, abc_optimization.py, pso_optimization.py, battery_soc.py, constraints.py, objective_function.py, planning_vector.py, plot_results_real.py, scenarios.py, entropy_weights.py.
+  * Entry points: main_real.py and main.py (identical real data runner).
+  * Datasets & Configs: Data1.csv, Data2.csv, custom_config.json, results_real.json, results_real_entropy.json, results.json, results_entropy.json.
+  * Packages: data_input/ (validator, input_form), recommendation/ (cost_model, engine).
+  * Recommendations: recommendations.json, recommendations.txt.
+  * Plots: Plot_real/ directory.
+- Cleaned up Resource_optimizer_real/ directory.
+- Updated dashboard/data_service.py and dashboard/app.py to read directly from root workspace.
+- Relaunched Streamlit server on http://localhost:8501 (verified HTTP 200).
+- Ran end-to-end smoke tests on consolidated root files with 100% pass rate.
+

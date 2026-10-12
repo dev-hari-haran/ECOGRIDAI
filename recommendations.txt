@@ -1,0 +1,97 @@
+============================================================================================
+          ECOGRIDAI AUTONOMOUS CAPACITY RECOMMENDATION & INVESTMENT REPORT          
+                20-Year Amortized Financial Sizing & Resilience Analysis            
+============================================================================================
+Generated At: 2026-10-12 00:31:21
+Total Scenarios Evaluated: 10
+Benchmark Rates: Solar PV: Rs.50k/kW | Wind: Rs.60k/kW | Battery: Rs.15k/kWh | Grid: Rs.5k/kW
+Amortization Horizon: 20 Years (7,300 Days)
+--------------------------------------------------------------------------------------------
+
+SCENARIO: NORMAL OPERATION
+  Load Satisfaction: 93.87% | Unmet: 3,070.0 kWh/day | Peak Gap: 1,036.1 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +1,139.7 kW Substation Limit | CapEx: Rs. 5,698,660 | 20-Yr Daily: Rs. 780.64/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 3,684.0 kWh / 1,139.7 kW | CapEx: Rs.55,259,820 | 20-Yr Daily: Rs.7569.84/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 1036.1 kW        | CapEx: Rs.51,806,000 | 20-Yr Daily: Rs.7096.71/day
+--------------------------------------------------------------------------------------------
+SCENARIO: PEAK SUMMER
+  Load Satisfaction: 84.98% | Unmet: 9,783.5 kWh/day | Peak Gap: 3,301.9 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +3,632.1 kW Substation Limit | CapEx: Rs.18,160,670 | 20-Yr Daily: Rs.2487.76/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 11,740.2 kWh / 3,632.1 kW | CapEx: Rs.176,103,360 | 20-Yr Daily: Rs.24123.75/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 3301.9 kW        | CapEx: Rs.165,097,000 | 20-Yr Daily: Rs.22616.03/day
+--------------------------------------------------------------------------------------------
+SCENARIO: BATTERY FAILURE
+  Load Satisfaction: 93.86% | Unmet: 3,074.9 kWh/day | Peak Gap: 1,037.8 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +1,141.6 kW Substation Limit | CapEx: Rs. 5,707,900 | 20-Yr Daily: Rs. 781.90/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 3,689.9 kWh / 1,141.6 kW | CapEx: Rs.55,349,100 | 20-Yr Daily: Rs.7582.07/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 1037.8 kW        | CapEx: Rs.51,890,000 | 20-Yr Daily: Rs.7108.22/day
+--------------------------------------------------------------------------------------------
+SCENARIO: GRID OUTAGE
+  Load Satisfaction: 59.45% | Unmet: 20,315.7 kWh/day | Peak Gap: 3,428.3 kW
+  Critical Period:   All Hours (Grid Outage / Islanded Mode)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 3428.3 kW        | CapEx: Rs.171,413,500 | 20-Yr Daily: Rs.23481.30/day
+    [2] EXPENSIVE   | Deploy Modular BESS Expansion        | Cap: 24,378.8 kWh / 3,771.1 kW | CapEx: Rs.365,682,240 | 20-Yr Daily: Rs.50093.46/day
+--------------------------------------------------------------------------------------------
+SCENARIO: LOW RENEWABLE
+  Load Satisfaction: 84.59% | Unmet: 7,720.2 kWh/day | Peak Gap: 2,605.6 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +2,866.1 kW Substation Limit | CapEx: Rs.14,330,690 | 20-Yr Daily: Rs.1963.11/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 9,264.3 kWh / 2,866.1 kW | CapEx: Rs.138,964,320 | 20-Yr Daily: Rs.19036.21/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 2605.6 kW        | CapEx: Rs.130,279,000 | 20-Yr Daily: Rs.17846.44/day
+--------------------------------------------------------------------------------------------
+SCENARIO: HIGH RENEWABLE SURPLUS
+  Load Satisfaction: 96.95% | Unmet: 1,528.1 kWh/day | Peak Gap: 515.8 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +567.3 kW Substation Limit | CapEx: Rs. 2,836,625 | 20-Yr Daily: Rs. 388.58/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 1,833.8 kWh / 567.3 kW | CapEx: Rs.27,506,520 | 20-Yr Daily: Rs.3768.02/day
+    [3] RECOMMENDED | Unlock Existing PV Headroom          | Cap: 515.8 kW         | CapEx: Rs.25,787,500 | 20-Yr Daily: Rs.3532.53/day
+--------------------------------------------------------------------------------------------
+SCENARIO: NIGHT PEAK
+  Load Satisfaction: 86.45% | Unmet: 8,147.2 kWh/day | Peak Gap: 2,749.7 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +3,024.7 kW Substation Limit | CapEx: Rs.15,123,295 | 20-Yr Daily: Rs.2071.68/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 9,776.7 kWh / 3,024.7 kW | CapEx: Rs.146,650,320 | 20-Yr Daily: Rs.20089.08/day
+    [3] RECOMMENDED | Unlock Existing PV Headroom          | Cap: 2008.5 kW        | CapEx: Rs.100,425,576 | 20-Yr Daily: Rs.13756.93/day
+    [4] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 741.2 kW         | CapEx: Rs.37,058,924 | 20-Yr Daily: Rs.5076.56/day
+--------------------------------------------------------------------------------------------
+SCENARIO: PARTIAL WIND FAILURE
+  Load Satisfaction: 84.53% | Unmet: 7,750.3 kWh/day | Peak Gap: 2,615.7 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +2,877.3 kW Substation Limit | CapEx: Rs.14,386,515 | 20-Yr Daily: Rs.1970.76/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 9,300.4 kWh / 2,877.3 kW | CapEx: Rs.139,505,580 | 20-Yr Daily: Rs.19110.35/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 2615.7 kW        | CapEx: Rs.130,786,500 | 20-Yr Daily: Rs.17915.96/day
+--------------------------------------------------------------------------------------------
+SCENARIO: PARTIAL PV FAILURE
+  Load Satisfaction: 93.71% | Unmet: 3,150.3 kWh/day | Peak Gap: 1,063.2 kW
+  Critical Period:   17:00 – 22:00 (Evening Peak & Sunset Deficit)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Substation Interconnect Capacity Upgrade | Cap: +1,169.6 kW Substation Limit | CapEx: Rs. 5,847,820 | 20-Yr Daily: Rs. 801.07/day
+    [2] RECOMMENDED | Deploy Modular BESS Expansion        | Cap: 3,780.4 kWh / 1,169.6 kW | CapEx: Rs.56,705,940 | 20-Yr Daily: Rs.7767.94/day
+    [3] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 1063.2 kW        | CapEx: Rs.53,162,000 | 20-Yr Daily: Rs.7282.47/day
+--------------------------------------------------------------------------------------------
+SCENARIO: EXTREME STRESS
+  Load Satisfaction: 25.54% | Unmet: 52,231.2 kWh/day | Peak Gap: 3,715.0 kW
+  Critical Period:   All Hours (Grid Outage / Islanded Mode)
+  Prioritized Interventions:
+    [1] RECOMMENDED | Install Supplementary PV Farm (Candidate Bus 18) | Cap: 3715.0 kW        | CapEx: Rs.185,750,000 | 20-Yr Daily: Rs.25445.21/day
+    [2] EXPENSIVE   | Deploy Modular BESS Expansion        | Cap: 62,677.5 kWh / 4,086.5 kW | CapEx: Rs.940,162,500 | 20-Yr Daily: Rs.128789.38/day
+--------------------------------------------------------------------------------------------
+
+============================================================================================
+                         EXECUTIVE INVESTMENT SUMMARY                               
+============================================================================================
+Total Cumulative Daily Energy Deficit across Suite: 116,771.6 kWh/day
+Total Recommended Capital Expenditure (CapEx):     Rs.3,287,437,875
+Total 20-Year Amortized Daily Operating Cost:       Rs.450,333.96 / day
+============================================================================================
