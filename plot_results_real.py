@@ -216,4 +216,96 @@ def plot_results_real(
     plt.close()
     saved_files.append(f5)
 
+    # 6. Graph 3 — Optimal Planning Vector Comparison
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 9), dpi=300)
+    ub = np.array([1.0, 1.0, 1.0, 500.0, 5000.0, 2000.0])
+    abc_norm_vec = np.array(abc_vector) / ub
+    pso_norm_vec = np.array(pso_vector) / ub
+
+    PV13_RATED = 851.5
+    PV30_RATED = 1157.6
+    WIND_RATED = 2097.97
+
+    abc_phys = [
+        abc_vector[0] * PV13_RATED,
+        abc_vector[1] * PV30_RATED,
+        abc_vector[2] * WIND_RATED,
+        abc_vector[3],
+        abc_vector[4],
+        abc_vector[5],
+    ]
+    pso_phys = [
+        pso_vector[0] * PV13_RATED,
+        pso_vector[1] * PV30_RATED,
+        pso_vector[2] * WIND_RATED,
+        pso_vector[3],
+        pso_vector[4],
+        pso_vector[5],
+    ]
+
+    labels_norm = [
+        "PV 1 Fraction\n(x0: Bus 13)",
+        "PV 2 Fraction\n(x1: Bus 30)",
+        "Wind Fraction\n(x2: Bus 6)",
+        "Battery Power\n(x3 / 500 kW)",
+        "Battery Cap.\n(x4 / 5000 kWh)",
+        "Grid Limit\n(x5 / 2000 kW)",
+    ]
+    labels_phys = [
+        "PV 1\n(Bus 13, kW)",
+        "PV 2\n(Bus 30, kW)",
+        "Wind\n(Bus 6, kW)",
+        "BESS Power\n(kW)",
+        "BESS Cap.\n(kWh)",
+        "Grid Limit\n(kW)",
+    ]
+
+    x_idx = np.arange(len(labels_norm))
+    width = 0.35
+
+    rects1_abc = ax1.bar(x_idx - width / 2, abc_norm_vec, width, label="ABC Optimal Vector", color=COLOR_ABC, alpha=0.9, edgecolor="#0F172A", linewidth=0.8)
+    rects1_pso = ax1.bar(x_idx + width / 2, pso_norm_vec, width, label="PSO Optimal Vector", color=COLOR_PSO, alpha=0.9, edgecolor="#0F172A", linewidth=0.8)
+    ax1.set_title("Graph 3: Optimal Planning Vector Comparison (Normalized Search Space [0, 1])", fontsize=13, fontweight="bold", pad=12)
+    ax1.set_ylabel("Normalized Allocation (p.u.)", fontsize=11, fontweight="semibold")
+    ax1.set_xticks(x_idx)
+    ax1.set_xticklabels(labels_norm, fontsize=9.5, fontweight="semibold")
+    ax1.set_ylim(0, 1.22)
+    ax1.grid(True, axis="y")
+    ax1.legend(loc="upper right", framealpha=0.95)
+
+    for rect in rects1_abc:
+        h = rect.get_height()
+        ax1.annotate(f"{h:.3f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
+                     textcoords="offset points", ha="center", va="bottom", fontsize=8.5, fontweight="bold", color=COLOR_ABC)
+    for rect in rects1_pso:
+        h = rect.get_height()
+        ax1.annotate(f"{h:.3f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
+                     textcoords="offset points", ha="center", va="bottom", fontsize=8.5, fontweight="bold", color=COLOR_PSO)
+
+    rects2_abc = ax2.bar(x_idx - width / 2, abc_phys, width, label="ABC Physical Sizing", color=COLOR_ABC, alpha=0.9, edgecolor="#0F172A", linewidth=0.8)
+    rects2_pso = ax2.bar(x_idx + width / 2, pso_phys, width, label="PSO Physical Sizing", color=COLOR_PSO, alpha=0.9, edgecolor="#0F172A", linewidth=0.8)
+    ax2.set_title("Physical Capacity & DER Sizing Allocations (kW & kWh)", fontsize=13, fontweight="bold", pad=12)
+    ax2.set_ylabel("Asset Capacity (kW / kWh)", fontsize=11, fontweight="semibold")
+    ax2.set_xticks(x_idx)
+    ax2.set_xticklabels(labels_phys, fontsize=9.5, fontweight="semibold")
+    ax2.set_ylim(0, 2450)
+    ax2.grid(True, axis="y")
+    ax2.legend(loc="upper right", framealpha=0.95)
+
+    for rect in rects2_abc:
+        h = rect.get_height()
+        ax2.annotate(f"{h:,.1f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
+                     textcoords="offset points", ha="center", va="bottom", fontsize=8.5, fontweight="bold", color=COLOR_ABC)
+    for rect in rects2_pso:
+        h = rect.get_height()
+        ax2.annotate(f"{h:,.1f}", xy=(rect.get_x() + rect.get_width() / 2, h), xytext=(0, 3),
+                     textcoords="offset points", ha="center", va="bottom", fontsize=8.5, fontweight="bold", color=COLOR_PSO)
+
+    plt.tight_layout()
+    f6 = os.path.join(output_dir, f"{save_prefix}optimal_planning_vector.png")
+    plt.savefig(f6, dpi=300)
+    plt.close()
+    saved_files.append(f6)
+
     return saved_files
+
