@@ -54,3 +54,6 @@ dist/
 # Pytest & Office
 .pytest_cache/
 ~$*.docx
+
+# Local Netlify folder
+.netlify
