@@ -44,3 +44,13 @@ _synthetic_archive/
 
 # Streamlit runtime
 .streamlit/secrets.toml
+
+# Node & Frontend
+node_modules/
+dist/
+.vite/
+*.tsbuildinfo
+
+# Pytest & Office
+.pytest_cache/
+~$*.docx

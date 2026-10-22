@@ -83,3 +83,86 @@
 - Completed comprehensive UI audit of Streamlit dashboard (dashboard/app.py).
 - Identified 14 UI enhancement items across button labeling, typos, color contrast, and layout hierarchy.
 - Provided structural design blueprint for UI specialist (modular page architecture, unified action triggers, WCAG AA compliance).
+
+[DAY 3 - FASTAPI BACKEND API LAYER & FIGMA MAKE REACT INTEGRATION]:
+- Architecture & Backend API Layer:
+  * Implemented `api/app.py` with FastAPI, uvicorn, and CORS middleware.
+  * Implemented `api/serializers.py` with `sanitize_for_json` providing clean serialization for numpy numbers, arrays, DataFrames, NaNs, and Infinities.
+  * Implemented `api/schemas.py` with Pydantic schemas (`ConfigModel`, `OptimizeRequest`, `ValidateRequest`, `RecommendationRequest`).
+  * Endpoints implemented:
+    - GET /api/health: Backend & model availability status.
+    - GET /api/network: Real IEEE 33-bus radial network topology, branch edges, bus coordinates, baseline active loads (3,715 kW total), installed resources, hop distances, and cable loss factors (1.00 - 1.15).
+    - GET /api/datasets: Metadata for Data1.csv, Data2.csv, and custom_config.json.
+    - POST /api/datasets/validate: Validates uploaded CSVs, form data, or manual entries via data_input.validator.
+    - GET /api/scenarios: 10 operational scenarios from scenarios.py.
+    - POST /api/optimize: Executes real ABC and PSO metaheuristic optimization, multi-objective fitness calculation, 24-hour battery SOC tracking, cable transmission loss calculations, and Shannon Entropy weighting. Supports both synchronous completion and asynchronous background jobs.
+    - GET /api/results/{job_id}: Async polling for optimization results.
+    - POST /api/recommendations: Direct capacity sizing & financial expansion intelligence.
+  * Fixed zero-battery power SOC history sizing bug in `dispatch_simulation_real.py`.
+- Frontend Service & Integration:
+  * Created typed API client in `web/src/services/api.ts` with complete TypeScript interfaces matching the backend.
+  * Configured Vite proxy in `web/vite.config.ts` forwarding `/api` to `http://127.0.0.1:8000`.
+  * Created `web/.env.example` and `web/.env` with `VITE_API_BASE_URL=/api`.
+  * Preserved 100% of Figma Make UI design, tokens, typography, cards, and responsiveness in `web/src/App.tsx`.
+  * Connected System Overview page to real `/api/network` topology, cable loss calculations, and bus details.
+  * Connected Data & Optimization page to `/api/datasets`, `/api/scenarios`, real-time CSV validation, and real optimization runner.
+  * Connected Algorithm Comparison page to real ABC vs PSO convergence curves, 24-hour dispatch metrics (Demand, Grid, Unmet, SOC, Solar, Wind, Battery), system & transmission losses, feasibility metrics, and autonomous capacity recommendations.
+  * Connected "Compare & modify" bus modifications to re-run optimization with modified parameters on the real backend.
+- Advanced Visualizations & Analysis Suite:
+  * Authored `web/src/components/Graphs.tsx` providing 4 high-fidelity, interactive SVG visualizers:
+    1. 24-Hour Stacked Energy Dispatch Area Chart:
+       - Displays layer-by-layer cumulative generation (Solar PV + Wind + Battery Discharge + Grid Import) under the Load Demand curve.
+       - Highlights unmet load deficit intervals in red.
+       - Includes algorithm toggle (ABC vs. PSO) and interactive hourly tooltip inspection.
+    2. Capital vs. Operational Cost Breakdown Bar Chart:
+       - Side-by-side grouped bars for ABC and PSO comparing amortized daily CapEx (₹/day) vs. OpEx (₹/day) and total daily cost.
+    3. 24-Hour Battery SOC Trajectory Curve:
+       - Dual-curve comparison of battery state of charge (%) over the 24-hour cycle for ABC (amber) vs. PSO (emerald).
+       - Features marked 20% minimum and 95% maximum safe operating limit boundaries and hover data inspections.
+    4. 10-Scenario Global Benchmark Suite Grouped Bar Chart:
+       - Renders benchmark metrics across all 10 scenarios (Normal, Peak Summer, Winter Low Solar, Wind Drought, High Renewable, Grid Failure, Battery Degraded, Industrial Peak, Extreme Weather, 100% Electrification).
+       - Dynamic selector for Total Cost (₹), Load Satisfaction (%), Unmet Load (kWh), and Objective Fitness Score (F).
+  * Added `GET /api/benchmark` endpoint in FastAPI backend reading `results_real_entropy.json` / `results_real.json`.
+  * Connected benchmarks state and loaded dynamically on mount in `web/src/App.tsx`.
+- Visualizer & Typography Polish:
+  * Eliminated text distortion caused by SVG viewBox scaling across all charts.
+  * Added "View in image" button on each of the 4 visualizer charts, opening a dedicated high-resolution vector and raster export modal with instant SVG and PNG downloads.
+  * Upgraded typography with Google Fonts `Inter` + `Plus Jakarta Sans` and `JetBrains Mono` with negative letter-spacing tokens and tabular numbers.
+- Autonomous Capacity Expansion ("Implement & run"):
+  * Added "Implement & run" action buttons to each Autonomous Capacity Recommendation item on the Compare & Modify page.
+  * Automatically applies the recommended asset sizing (Solar PV, BESS, Grid Interconnect Upgrade) to the active system configuration and re-executes optimization, achieving 100% total demand satisfaction (0 unmet load).
+- Feeder Network Topology Management (Add/Delete Bus and Branch):
+  * Added toolbar controls and interactive modals to `NetworkPage` for adding/deleting buses and branch paths:
+    - `+ Add Bus`: modal to configure Bus ID, Type (Load, Solar, Wind, Battery), Load kW, and connection link.
+    - `- Delete Bus`: button to delete the selected node and its connected branches (protecting root Bus 1).
+    - `+ Add Path (Branch)`: modal to create line connections between arbitrary buses.
+    - `- Delete Path (Branch)`: modal to disconnect lines from the feeder.
+    - `↺ Reset IEEE-33`: restores the standard 33-bus baseline feeder.
+  * Added supporting backend API endpoints: `/api/network/add-bus`, `/api/network/delete-bus`, `/api/network/add-branch`, `/api/network/delete-branch`.
+- Testing & Hosting:
+  * Authored and executed `tests/test_api.py` with 9 unit/integration tests passing (100% pass rate).
+  * Authored and executed `tests/test_e2e_proxy.py` verifying end-to-end communication via the Vite dev server proxy.
+  * Validated frontend build via `npm run build` (0 errors).
+  * Both servers hosted locally:
+    - FastAPI Backend: http://127.0.0.1:8000 (verified live)
+    - Vite Frontend App: http://127.0.0.1:5173 (verified live)
+
+[DAY 3 - ADVANCED GRAPH SUITE, SMOOTH BUS CHANNELS & PAGE 4 SIMULATION]:
+- Post-Implementation Comparison Graphs on "Implement & Run":
+  * Generated dedicated before vs. after comparison cards: Unmet Load Deficit drop (17,072.8 kWh -> 0.0 kWh), Load Satisfaction increase (93.8% -> 100.0%), and Active Asset Expansion info.
+  * Added upgraded 24-hour Post-Implementation Stacked Energy Dispatch Chart demonstrating 100% total demand satisfaction across all 24 hours.
+- Smooth Interactive Bus Channels:
+  * Overhauled `BusNetwork` to allow direct interactive hovering and clicking on feeder branch channels.
+  * Added wide 18px click hit areas, glowing halo filters (`channelGlow`), animated running electricity flow pulse dashes (`stroke-dashoffset`), and connected bus indicator rings.
+  * Interactive channel banner with cable impedance (R, X), loss multiplier, quick bus focus switchers, and inline "Disconnect Line" button.
+- Connected Real Python Graphs from `plot_results_real.py`:
+  * Graph #2: Bus-Wise Generation Contribution Bar Chart (Bus 13 PV 1, Bus 30 PV 2, Bus 6 Wind) with interactive tooltip and "View in image" modal.
+  * Graph #3: 33-Bus Transmission Losses per Bus (Bus 13, Bus 30, Bus 6) with multi-line curve, hourly tooltip inspection, and "View in image" export.
+- Page 4: Shannon Entropy Weights & Fitness Function Simulation:
+  * Added dedicated Page 4 with sidebar navigation `{ id: "weights", title: "Weights & fitness", subtitle: "Real-time simulation" }`.
+  * Real-time Shannon Entropy Derivation Simulator across 10 scenarios (P_ij -> E_j -> d_j -> W_j) explaining why Unmet Deficit receives 47.3% weight and Curtailment receives 36.2% weight.
+  * Interactive "Fitness Function in a Box": Live formula display (F = sum W_j * f_j), real-time parameter sliders (CapEx, OpEx, Losses, Deficit, Curtailment), normalization factor calculation, and step-by-step scalar fitness evaluation.
+  * Toggle between Shannon Entropy weights, Equal Heuristic (20% each), and Custom sliders.
+- Verification:
+  * Full Vite build verified (`npm run build` exits with code 0).
+  * Proxy test suite `test_e2e_proxy.py` verified all 6 endpoints with 100% success.

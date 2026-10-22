@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+:root {
+  /* Core Botanical-Industrial Earth Palette */
+  --color-olive-leaf: #606c38;
+  --color-black-forest: #283618;
+  --color-cornsilk: #fefae0;
+  --color-light-caramel: #dda15e;
+  --color-copper: #bc6c25;
+
+  /* Extended Surface & Semantic Tokens */
+  --color-cornsilk-soft: #f5efd0;
+  --color-cornsilk-deep: #ece4bc;
+  --color-cornsilk-card: #fbf7dc;
+  --color-forest-mid: #3a4b24;
+  --color-forest-muted: #52603c;
+  --color-olive-light: #7c8a4f;
+  --color-olive-tint: #e8ecd9;
+  --color-caramel-tint: #faeedb;
+  --color-copper-tint: #f8e3d0;
+  --color-copper-dark: #965218;
+  --color-danger-alert: #b93829;
+  --color-danger-tint: #fbe6e3;
+
+  /* Typography Tokens */
+  --font-display: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@theme {
+  --color-olive: var(--color-olive-leaf);
+  --color-olive-light: var(--color-olive-light);
+  --color-olive-tint: var(--color-olive-tint);
+  --color-forest: var(--color-black-forest);
+  --color-forest-mid: var(--color-forest-mid);
+  --color-forest-muted: var(--color-forest-muted);
+  --color-cornsilk: var(--color-cornsilk);
+  --color-cornsilk-soft: var(--color-cornsilk-soft);
+  --color-cornsilk-deep: var(--color-cornsilk-deep);
+  --color-cornsilk-card: var(--color-cornsilk-card);
+  --color-caramel: var(--color-light-caramel);
+  --color-caramel-tint: var(--color-caramel-tint);
+  --color-copper: var(--color-copper);
+  --color-copper-tint: var(--color-copper-tint);
+  --color-copper-dark: var(--color-copper-dark);
+  --color-danger: var(--color-danger-alert);
+  --color-danger-tint: var(--color-danger-tint);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background-color: var(--color-cornsilk);
+  color: var(--color-black-forest);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: 'cv02' 1, 'cv03' 1, 'cv04' 1, 'cv11' 1, 'tnum' 1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+/* Technical Grid Pattern for Network Schematic Canvas */
+.bg-technical-grid {
+  background-color: var(--color-cornsilk-card);
+  background-image:
+    linear-gradient(to right, rgba(96, 108, 56, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(96, 108, 56, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-forest-grid {
+  background-color: var(--color-black-forest);
+  background-image:
+    linear-gradient(to right, rgba(254, 250, 224, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(254, 250, 224, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-cornsilk-soft);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-olive-leaf);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-black-forest);
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  70% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
