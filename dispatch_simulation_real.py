@@ -22,6 +22,7 @@ CONFIG: Dict[str, Any] = {
     "pv_bus13_kw": 851.5,
     "pv_bus30_kw": 1157.6,
     "wind_bus6_kw": 2097.97,
+    "grid_cap_kw": 2000.0,
 }
 
 
@@ -32,7 +33,7 @@ def dispatch_simulation_real(
     load_profile: np.ndarray,
     grid_available: bool = True,
     battery_available: bool = True,
-    grid_cap_kw: float = 2000.0,
+    grid_cap_kw: float = None,
 ) -> Dict[str, Any]:
     """
     Executes 24-hour hourly dispatch simulation using fraction-based planning vector x.
@@ -43,6 +44,9 @@ def dispatch_simulation_real(
       x[4]: battery_capacity_kwh
       x[5]: grid_import_limit_kw
     """
+    if grid_cap_kw is None:
+        grid_cap_kw = float(CONFIG.get("grid_cap_kw", 2000.0))
+
     x = planning_vector
     pv13_capacity = x[0] * CONFIG["pv_bus13_kw"]
     pv30_capacity = x[1] * CONFIG["pv_bus30_kw"]
@@ -118,6 +122,8 @@ def dispatch_simulation_real(
             actual_chg, actual_dis, _ = battery.step(p_charge=p_chg_req, p_discharge=p_dis_req)
         else:
             actual_chg, actual_dis = 0.0, 0.0
+            if battery_available:
+                battery.step(p_charge=0.0, p_discharge=0.0)
 
         p_bat_chg_arr[t] = actual_chg
         p_bat_dis_arr[t] = actual_dis
@@ -150,8 +156,9 @@ def dispatch_simulation_real(
         loss_bus13[t] = g13 * (lf_bus13 - 1.0)
         loss_bus30[t] = g30 * (lf_bus30 - 1.0)
         loss_bus6[t] = g6 * (lf_bus6 - 1.0)
-
-    soc_history = battery.get_soc_history() if (battery_available and battery_cap > 0) else np.zeros(24)
+    soc_history = battery.get_soc_history() if battery_available else np.full(24, 0.50)
+    if len(soc_history) != 24:
+        soc_history = np.full(24, 0.50)
 
     total_solar_gen = float(np.sum(p_solar_avail_arr))
     total_wind_gen = float(np.sum(p_wind_avail_arr))

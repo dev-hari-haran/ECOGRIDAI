@@ -49,29 +49,56 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-    /* Dark Theme Custom Styling */
+    /* EcoGridAI — Primary #2D3E2C / Secondary #E5FE98 Theme */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
     .stApp {
-        background-color: #0F172A;
-        color: #F8FAFC;
-        font-family: 'Segoe UI', Inter, sans-serif;
+        background-color: #2D3E2C;
+        color: #E5FE98;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
     }
     [data-testid="stSidebar"] {
-        background-color: #1E293B;
-        border-right: 1px solid #334155;
+        background-color: #243323;
+        border-right: 1px solid #4A6348;
+    }
+    /* Sidebar text */
+    [data-testid="stSidebar"] * {
+        color: #A8C4A6 !important;
+    }
+    [data-testid="stSidebar"] strong, [data-testid="stSidebar"] b {
+        color: #E5FE98 !important;
+    }
+    /* Selectbox / widgets */
+    [data-baseweb="select"] {
+        background-color: #3A5038 !important;
+        border-color: #4A6348 !important;
+    }
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: #243323;
+        border-bottom: 2px solid #4A6348;
+        border-radius: 8px 8px 0 0;
+    }
+    .stTabs [data-baseweb="tab"] {
+        color: #A8C4A6;
+        font-weight: 600;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #E5FE98 !important;
+        border-bottom: 2px solid #E5FE98;
     }
     .metric-card {
-        background: linear-gradient(145deg, #1E293B, #0F172A);
-        border: 1px solid #334155;
+        background: linear-gradient(145deg, #3A5038, #2D3E2C);
+        border: 1px solid #4A6348;
         border-radius: 10px;
         padding: 16px 20px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         margin-bottom: 12px;
     }
     .metric-title {
         font-size: 13px;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: #94A3B8;
+        color: #A8C4A6;
         font-weight: 600;
         margin-bottom: 6px;
     }
@@ -81,41 +108,41 @@ st.markdown(
         align-items: baseline;
     }
     .val-abc {
-        color: #10B981;
+        color: #E5FE98;
         font-weight: 700;
         font-size: 20px;
     }
     .val-pso {
-        color: #0288D1;
+        color: #7DD3FC;
         font-weight: 700;
         font-size: 20px;
     }
     .val-label {
         font-size: 11px;
-        color: #64748B;
+        color: #6B8F69;
     }
     .winner-pill-abc {
-        background-color: rgba(16, 185, 129, 0.15);
-        color: #10B981;
-        border: 1px solid #10B981;
+        background-color: rgba(229, 254, 152, 0.15);
+        color: #E5FE98;
+        border: 1px solid #E5FE98;
         padding: 2px 8px;
         border-radius: 12px;
         font-size: 11px;
         font-weight: 600;
     }
     .winner-pill-pso {
-        background-color: rgba(2, 136, 209, 0.15);
-        color: #0288D1;
-        border: 1px solid #0288D1;
+        background-color: rgba(125, 211, 252, 0.15);
+        color: #7DD3FC;
+        border: 1px solid #7DD3FC;
         padding: 2px 8px;
         border-radius: 12px;
         font-size: 11px;
         font-weight: 600;
     }
     .winner-pill-tie {
-        background-color: rgba(148, 163, 184, 0.15);
-        color: #94A3B8;
-        border: 1px solid #94A3B8;
+        background-color: rgba(168, 196, 166, 0.15);
+        color: #A8C4A6;
+        border: 1px solid #A8C4A6;
         padding: 2px 8px;
         border-radius: 12px;
         font-size: 11px;
@@ -123,8 +150,24 @@ st.markdown(
     }
     /* Headers */
     h1, h2, h3 {
-        color: #F8FAFC !important;
+        color: #E5FE98 !important;
         font-weight: 700 !important;
+    }
+    /* Dividers */
+    hr {
+        border-color: #4A6348 !important;
+    }
+    /* Dataframe */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #4A6348;
+        border-radius: 8px;
+    }
+    /* Metric native widgets */
+    [data-testid="stMetricValue"] {
+        color: #E5FE98 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #A8C4A6 !important;
     }
     </style>
     """,
@@ -221,7 +264,7 @@ with col_h2:
     st.markdown(
         """
         <div style="text-align: right; margin-top: 15px;">
-            <span style="background-color: #10B981; color: #0F172A; padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px;">SYSTEM ONLINE</span>
+            <span style="background-color: #E5FE98; color: #2D3E2C; padding: 4px 12px; border-radius: 12px; font-weight: 700; font-size: 12px;">SYSTEM ONLINE</span>
         </div>
         """,
         unsafe_allow_html=True,
@@ -550,18 +593,18 @@ with tab_recommend:
         st.markdown("#### Recommended Expansion Interventions:")
         if actions:
             for act in actions:
-                tag_color = "#10B981" if act["priority"] == "RECOMMENDED" else ("#F59E0B" if act["priority"] == "ALTERNATIVE" else "#EF4444")
+                tag_color = "#E5FE98" if act["priority"] == "RECOMMENDED" else ("#FB923C" if act["priority"] == "ALTERNATIVE" else "#F87171")
                 st.markdown(
                     f"""
                     <div class="metric-card" style="border-left: 4px solid {tag_color};">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <h4 style="margin: 0; color: #F8FAFC;">{act['action']}</h4>
+                            <h4 style="margin: 0; color: #E5FE98;">{act['action']}</h4>
                             <span style="background-color: rgba(255,255,255,0.1); color: {tag_color}; padding: 2px 8px; border-radius: 8px; font-weight: 700; font-size: 11px;">
                                 {act['priority']}
                             </span>
                         </div>
-                        <p style="margin: 8px 0 4px 0; color: #CBD5E1;">{act['description']}</p>
-                        <div style="display: flex; gap: 20px; font-size: 13px; color: #94A3B8; margin-top: 6px;">
+                        <p style="margin: 8px 0 4px 0; color: #A8C4A6;">{act['description']}</p>
+                        <div style="display: flex; gap: 20px; font-size: 13px; color: #6B8F69; margin-top: 6px;">
                             <span><b>Capital Cost:</b> ₹{act['capital_cost']:,.0f}</span>
                             <span><b>Amortized (20-yr):</b> ₹{act['daily_amortized_cost']:,.2f}/day</span>
                             <span><b>Capacity Added:</b> +{act['additional_capacity']}</span>

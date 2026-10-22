@@ -49,7 +49,7 @@ def run_abc(
     # 1. Initialization
     for i in range(pop_size):
         population[i] = rng.uniform(lb, ub)
-        population[i] = clip_and_cast_vector(population[i], battery_available=battery_available)
+        population[i] = clip_and_cast_vector(population[i], battery_available=battery_available, bounds=bounds)
 
         fitness[i] = compute_fitness(
             population[i],
@@ -77,7 +77,7 @@ def run_abc(
             phi = rng.uniform(-1.0, 1.0)
             x_new = population[i].copy()
             x_new[j] = population[i][j] + phi * (population[i][j] - population[k][j])
-            x_new = clip_and_cast_vector(x_new, battery_available=battery_available)
+            x_new = clip_and_cast_vector(x_new, battery_available=battery_available, bounds=bounds)
 
             f_new = compute_fitness(
                 x_new,
@@ -109,7 +109,7 @@ def run_abc(
             phi = rng.uniform(-1.0, 1.0)
             x_new = population[i].copy()
             x_new[j] = population[i][j] + phi * (population[i][j] - population[k][j])
-            x_new = clip_and_cast_vector(x_new, battery_available=battery_available)
+            x_new = clip_and_cast_vector(x_new, battery_available=battery_available, bounds=bounds)
 
             f_new = compute_fitness(
                 x_new,
@@ -132,7 +132,7 @@ def run_abc(
         max_trial_idx = np.argmax(trial)
         if trial[max_trial_idx] > limit:
             population[max_trial_idx] = rng.uniform(lb, ub)
-            population[max_trial_idx] = clip_and_cast_vector(population[max_trial_idx], battery_available=battery_available)
+            population[max_trial_idx] = clip_and_cast_vector(population[max_trial_idx], battery_available=battery_available, bounds=bounds)
 
             fitness[max_trial_idx] = compute_fitness(
                 population[max_trial_idx],

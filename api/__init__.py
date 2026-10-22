@@ -1,0 +1,3 @@
+"""
+EcoGridAI FastAPI Backend Package
+"""

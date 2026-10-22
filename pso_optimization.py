@@ -53,7 +53,7 @@ def run_pso(
     # 1. Initialization
     for i in range(num_particles):
         particles[i] = rng.uniform(lb, ub)
-        particles[i] = clip_and_cast_vector(particles[i], battery_available=battery_available)
+        particles[i] = clip_and_cast_vector(particles[i], battery_available=battery_available, bounds=bounds)
 
         velocities[i] = rng.uniform(-v_max, v_max)
 
@@ -90,7 +90,7 @@ def run_pso(
             velocities[i] = np.clip(velocities[i], -v_max, v_max)
 
             particles[i] = particles[i] + velocities[i]
-            particles[i] = clip_and_cast_vector(particles[i], battery_available=battery_available)
+            particles[i] = clip_and_cast_vector(particles[i], battery_available=battery_available, bounds=bounds)
 
             fit_current = compute_fitness(
                 particles[i],

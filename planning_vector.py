@@ -57,9 +57,11 @@ def get_planning_bounds(battery_available: bool = True) -> Dict[str, Any]:
 def clip_and_cast_vector(
     x: np.ndarray,
     battery_available: bool = True,
+    bounds: Dict[str, Any] = None,
 ) -> np.ndarray:
-    """Clips vector x to bounds."""
-    bounds = get_planning_bounds(battery_available=battery_available)
+    """Clips vector x to specified bounds (or default bounds)."""
+    if bounds is None:
+        bounds = get_planning_bounds(battery_available=battery_available)
     x_clipped = np.clip(np.array(x, dtype=np.float64), bounds["lb"], bounds["ub"])
     if not battery_available:
         x_clipped[3] = 0.0

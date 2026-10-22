@@ -1,0 +1,10 @@
+{
+  "description": "Visualize and optimize energy distribution in the IEEE 33-bus system with data uploads, scenario analysis, and algorithm comparisons for improved resource planning.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

@@ -12,18 +12,18 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 CONFIG: Dict[str, Any] = {
-    "color_abc": "#10B981",       # Emerald Green
-    "color_pso": "#0288D1",       # Electric Cyan / Sky Blue
+    "color_abc": "#E5FE98",       # Secondary — Lime Citrus (ABC accent)
+    "color_pso": "#7DD3FC",       # Sky Blue 300 (PSO accent)
     "color_solar": "#F59E0B",     # Gold Amber
-    "color_wind": "#06B6D4",      # Cyan
-    "color_bat_dis": "#8B5CF6",   # Purple
-    "color_grid": "#F97316",      # Orange
-    "color_load": "#EF4444",      # Crimson Red
-    "color_bg_dark": "#0F172A",   # Slate 900
-    "color_card_dark": "#1E293B", # Slate 800
-    "color_gridline": "#334155",  # Slate 700
-    "color_text": "#F8FAFC",      # Slate 50
-    "color_text_muted": "#94A3B8",# Slate 400
+    "color_wind": "#34D399",      # Emerald
+    "color_bat_dis": "#C084FC",   # Violet 400
+    "color_grid": "#FB923C",      # Orange 400
+    "color_load": "#F87171",      # Red 400
+    "color_bg_dark": "#2D3E2C",   # Primary — Deep Forest Green
+    "color_card_dark": "#3A5038", # Primary Light — Fern Green
+    "color_gridline": "#4A6348",  # Primary Mid — Moss Green
+    "color_text": "#E5FE98",      # Secondary — Lime Citrus
+    "color_text_muted": "#A8C4A6",# Muted sage green
 }
 
 
@@ -44,7 +44,7 @@ def apply_dark_layout(fig: go.Figure, title: str = "", height: int = 420) -> go.
         height=height,
         margin={"l": 45, "r": 35, "t": 60, "b": 45},
         legend={
-            "bgcolor": "rgba(15, 23, 42, 0.75)",
+            "bgcolor": "rgba(45, 62, 44, 0.85)",
             "bordercolor": CONFIG["color_gridline"],
             "borderwidth": 1,
             "font": {"color": CONFIG["color_text"], "size": 11},
@@ -281,7 +281,7 @@ def build_cost_breakdown_chart(scenario: Dict[str, Any]) -> go.Figure:
             x=["ABC", "PSO"],
             y=[abc_cap, pso_cap],
             name="Capital Cost",
-            marker_color="#3B82F6", # Royal Blue
+            marker_color="#7DD3FC",  # Sky Blue 300
             hovertemplate="%{x}<br>Capital: ₹%{y:,.2f}<extra></extra>",
         )
     )
@@ -291,7 +291,7 @@ def build_cost_breakdown_chart(scenario: Dict[str, Any]) -> go.Figure:
             x=["ABC", "PSO"],
             y=[abc_op, pso_op],
             name="Operational Cost",
-            marker_color="#10B981", # Green
+            marker_color="#E5FE98",  # Secondary Lime
             hovertemplate="%{x}<br>Operational: ₹%{y:,.2f}<extra></extra>",
         )
     )
