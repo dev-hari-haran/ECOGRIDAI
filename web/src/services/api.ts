@@ -179,107 +179,135 @@ export interface OptimizationResponse {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
 
+const isStaticHosting =
+  typeof window !== "undefined" &&
+  (window.location.hostname.includes("netlify.app") ||
+    window.location.hostname.includes("vercel.app") ||
+    window.location.hostname.includes("github.io") ||
+    window.location.hostname.includes("onrender.com"))
+
 function handleFallback<T>(endpoint: string, options?: RequestInit): T {
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`
 
-  if (cleanEndpoint === "/health") {
-    return { status: "ok", models: ["ABC", "PSO"], mode: "client-edge" } as T
-  }
-
-  if (cleanEndpoint === "/network") {
-    return getClientNetwork() as T
-  }
-
-  if (cleanEndpoint === "/datasets") {
-    return [
-      {
-        id: "Data1.csv",
-        name: "Data1.csv (Measured 24h Real Feeders)",
-        description: "Measured actual kW values with 3,715 kW peak demand and calibrated generation.",
-        hours: 24,
-        peak_load_kw: 3715.0,
-        total_pv_kw: 2009.1,
-        total_wind_kw: 2097.97,
-        is_default: true,
-      },
-      {
-        id: "Data2.csv",
-        name: "Data2.csv (Normalized Profiles)",
-        description: "Normalized 0-1 p.u. solar, wind, and diurnal profiles.",
-        hours: 24,
-        is_default: false,
-      },
-    ] as T
-  }
-
-  if (cleanEndpoint === "/scenarios") {
-    return DEFAULT_SCENARIOS as T
-  }
-
-  if (cleanEndpoint === "/benchmark") {
-    return benchmarkData as unknown as T
-  }
-
-  if (cleanEndpoint === "/datasets/validate") {
-    return {
-      valid: true,
-      errors: [],
-      warnings: ["Validated via client-side profile validator."],
-      stats: {
-        rows: 24,
-        peak_load_kw: 3715.0,
-        min_load_kw: 1968.95,
-        average_load_kw: 2854.2,
-      },
-    } as T
-  }
-
-  if (cleanEndpoint === "/optimize") {
-    let bodyObj: any = {}
-    try {
-      if (options?.body) {
-        bodyObj = JSON.parse(options.body as string)
-      }
-    } catch {
-      // ignore
+  try {
+    if (cleanEndpoint === "/health") {
+      return { status: "ok", models: ["ABC", "PSO"], mode: "client-edge" } as T
     }
 
-    return runClientDispatchSimulation({
-      scenario_index: bodyObj.scenario_index ?? 0,
-      config: bodyObj.config ?? {
-        solarKw: 2009.1,
-        windKw: 2097.97,
-        batteryKw: 1000.0,
-        batteryKwh: 3000.0,
-        gridLimitKw: 2000.0,
-      },
-      modifications: bodyObj.modifications,
-      custom_load_profile: bodyObj.custom_load_profile,
-    }) as T
-  }
-
-  if (cleanEndpoint === "/recommendations") {
-    let scName = "Normal Operation"
-    try {
-      if (options?.body) {
-        const body = JSON.parse(options.body as string)
-        if (body.scenario_name) scName = body.scenario_name
-      }
-    } catch {
-      // ignore
+    if (cleanEndpoint === "/network") {
+      return getClientNetwork() as T
     }
-    const recGroup = recommendationsData[scName] || recommendationsData["Normal Operation"]
-    return { recommendations: recGroup?.recommendations || [] } as T
+
+    if (cleanEndpoint === "/datasets") {
+      return [
+        {
+          id: "Data1.csv",
+          name: "Data1.csv (Measured 24h Real Feeders)",
+          description: "Measured actual kW values with 3,715 kW peak demand and calibrated generation.",
+          hours: 24,
+          peak_load_kw: 3715.0,
+          total_pv_kw: 2009.1,
+          total_wind_kw: 2097.97,
+          is_default: true,
+        },
+        {
+          id: "Data2.csv",
+          name: "Data2.csv (Normalized Profiles)",
+          description: "Normalized 0-1 p.u. solar, wind, and diurnal profiles.",
+          hours: 24,
+          is_default: false,
+        },
+      ] as T
+    }
+
+    if (cleanEndpoint === "/scenarios") {
+      return DEFAULT_SCENARIOS as T
+    }
+
+    if (cleanEndpoint === "/benchmark") {
+      return benchmarkData as unknown as T
+    }
+
+    if (cleanEndpoint === "/datasets/validate") {
+      return {
+        valid: true,
+        errors: [],
+        warnings: ["Validated via client-side profile validator."],
+        stats: {
+          rows: 24,
+          peak_load_kw: 3715.0,
+          min_load_kw: 1968.95,
+          average_load_kw: 2854.2,
+        },
+      } as T
+    }
+
+    if (cleanEndpoint === "/optimize") {
+      let bodyObj: any = {}
+      try {
+        if (options?.body) {
+          bodyObj = JSON.parse(options.body as string)
+        }
+      } catch {
+        // ignore
+      }
+
+      return runClientDispatchSimulation({
+        scenario_index: bodyObj.scenario_index ?? 0,
+        config: bodyObj.config ?? {
+          solarKw: 2009.1,
+          windKw: 2097.97,
+          batteryKw: 1000.0,
+          batteryKwh: 3000.0,
+          gridLimitKw: 2000.0,
+        },
+        modifications: bodyObj.modifications,
+        custom_load_profile: bodyObj.custom_load_profile,
+      }) as T
+    }
+
+    if (cleanEndpoint === "/recommendations") {
+      let scName = "Normal Operation"
+      try {
+        if (options?.body) {
+          const body = JSON.parse(options.body as string)
+          if (body.scenario_name) scName = body.scenario_name
+        }
+      } catch {
+        // ignore
+      }
+      const recGroup = recommendationsData[scName] || recommendationsData["Normal Operation"]
+      return { recommendations: recGroup?.recommendations || [] } as T
+    }
+
+    if (cleanEndpoint.startsWith("/network/")) {
+      return { status: "success" } as T
+    }
+  } catch (err) {
+    console.warn("Client fallback execution exception:", err)
+    if (cleanEndpoint === "/optimize") {
+      return runClientDispatchSimulation({
+        scenario_index: 0,
+        config: {
+          solarKw: 2009.1,
+          windKw: 2097.97,
+          batteryKw: 1000.0,
+          batteryKwh: 3000.0,
+          gridLimitKw: 2000.0,
+        },
+      }) as T
+    }
   }
 
-  if (cleanEndpoint.startsWith("/network/")) {
-    return { status: "success" } as T
-  }
-
-  throw new Error(`Endpoint ${endpoint} not found`)
+  return { status: "ok" } as unknown as T
 }
 
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
+  // If hosted on Netlify, run directly on client simulation without making doomed HTTP call
+  if (isStaticHosting) {
+    return handleFallback<T>(endpoint, options)
+  }
+
   const url = `${API_BASE}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`
   try {
     const response = await fetch(url, {
@@ -291,16 +319,15 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
     })
 
     if (!response.ok) {
-      // Fallback on 404 / 502 / 503 (e.g. Netlify static hosting where /api is not backed by Python)
       return handleFallback<T>(endpoint, options)
     }
 
     return await response.json()
   } catch {
-    // Network failure / offline / CORS -> smoothly fall back to client simulation
     return handleFallback<T>(endpoint, options)
   }
 }
+
 
 export const api = {
   getHealth: () => apiRequest<{ status: string; models: string[] }>("/health"),
