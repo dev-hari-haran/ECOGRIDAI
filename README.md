@@ -29,11 +29,12 @@ The platform eliminates arbitrary objective function weighting through the **Sha
   - Unmet deficit energy and peak shortfall gap analysis.
   - Heuristic sizing: Solar PV headroom expansion, modular BESS expansion ($1.20\times$ reserve), and substation interconnect upgrades.
   - 20-Year daily amortized financial model ($7,300$ days) with cost-effectiveness index $\Phi = \text{CapEx} / \text{kW Served}$.
-- **Interactive Streamlit Intelligence Dashboard**:
-  - Modern dark-themed dashboard with 5 KPI summary cards.
-  - 24-Hour stacked energy dispatch area curve, convergence trajectory curves, and cost breakdowns.
-  - Multi-scenario global benchmark matrix with automated cost-winner detection.
-  - Data Export Center for CSV metrics, JSON configurations, and executive reports.
+- **Modern Full-Stack Microgrid Intelligence Platform**:
+  - **React 19 + TypeScript + Vite + Tailwind CSS** executive web interface with dark microgrid aesthetics.
+  - Interactive IEEE 33-Bus system topology map with Add/Remove Bus and Branch editor.
+  - Recalculated Before vs. After Dispatch Comparison with realistic deficit gap modeling.
+  - 4 High-Resolution Canvas Visualizations with direct SVG/PNG export options.
+  - **FastAPI 0.115+** asynchronous backend service providing RESTful endpoints for real-time metaheuristic optimization, network topologies, dataset validation, and PDF report compilation.
 
 ---
 
@@ -41,7 +42,7 @@ The platform eliminates arbitrary objective function weighting through the **Sha
 
 ```mermaid
 graph TD
-    subgraph Data Layer
+    subgraph Data & Grid Layer
         D1[Data1.csv / Data2.csv<br/>Measured 24h Profiles]
         CI[custom_config.json<br/>Custom IEEE 33-Bus Config]
     end
@@ -60,9 +61,10 @@ graph TD
         REC[recommendations.json<br/>recommendations.txt]
     end
 
-    subgraph Presentation & Analytics
-        ST[dashboard/app.py<br/>Streamlit Dashboard]
-        PLT[dashboard/components.py<br/>Plotly Interactive Visualizers]
+    subgraph Service & Presentation Layer
+        API[api/app.py<br/>FastAPI Async REST Service]
+        WEB[web/<br/>React 19 + Vite + Tailwind Web App]
+        ST[dashboard/app.py<br/>Streamlit Intelligence Platform]
     end
 
     D1 --> M
@@ -75,9 +77,9 @@ graph TD
     M --> RE
     RE --> CM
     CM --> REC
+    M --> API
+    API --> WEB
     M --> ST
-    REC --> ST
-    ST --> PLT
 ```
 
 ---
@@ -102,6 +104,18 @@ ECOGRIDAI/
 ├── plot_results_real.py              # Benchmark plotting module
 ├── main.py / main_real.py            # Primary 5-phase optimization pipeline
 │
+├── api/                              # FastAPI REST API Backend
+│   ├── app.py                        # REST application endpoints, CORS & routing
+│   ├── schemas.py                    # Pydantic schemas for network, scenarios & jobs
+│   ├── serializers.py                # High-fidelity numeric & NaN-safe serializers
+│   └── pdf_generator.py              # Automated executive PDF report compiler
+│
+├── web/                              # Modern React 19 Web Application
+│   ├── src/                          # TypeScript React sources (App, Graphs, Topology)
+│   ├── public/                       # Favicon and static assets
+│   ├── package.json                  # Frontend dependencies and build scripts
+│   └── vite.config.ts                # Vite 8 build & backend proxy config
+│
 ├── custom_config.json                # Validated custom IEEE 33-bus configuration
 ├── recommendations.json              # Structured JSON capacity recommendation outputs
 ├── recommendations.txt               # Executive ASCII financial recommendation report
@@ -124,10 +138,14 @@ ECOGRIDAI/
 │   ├── components.py                 # Plotly chart builders & dark theme design system
 │   └── data_service.py               # Benchmark dataset access & extraction layer
 │
+├── tests/                            # Automated Pytest Test Suite
+│   ├── test_api.py                   # API serialization, endpoints & optimization tests
+│   └── test_e2e_proxy.py             # End-to-end integration tests
+│
+├── report_figures/                   # High-resolution benchmark figures
+├── EcoGridAI_Project_Report.docx     # Comprehensive IEEE-format project documentation
 ├── Plot_real/                        # High-resolution scenario visualization plots
-├── PRD.md                            # Complete Product Requirements Document
-├── Prompt.md                         # Architectural invariant rules & operational constraints
-└── progress.txt                      # Implementation audit trajectory and change log
+└── PRD.md                            # Complete Product Requirements Document
 ```
 
 ---
@@ -135,30 +153,31 @@ ECOGRIDAI/
 ## 🚀 Quick Start Guide
 
 ### 1. Prerequisites
-Ensure you have Python 3.10 or higher installed:
+- Python 3.10 or higher
+- Node.js 18+ and npm
 
+### 2. Backend Installation & Run
 ```bash
-python --version
-```
-
-### 2. Installation
-Clone the repository and install required dependencies:
-
-```bash
+# Clone the repository
 git clone https://github.com/dev-hari-haran/ECOGRIDAI.git
 cd ECOGRIDAI
-pip install numpy pandas streamlit plotly
+
+# Install Python requirements
+pip install numpy pandas streamlit plotly fastapi uvicorn pydantic pytest
+
+# Start FastAPI Backend Service
+python -m uvicorn api.app:app --host 127.0.0.1 --port 8000
 ```
 
-### 3. Run Optimization Pipeline
-To execute the complete 5-phase optimization workflow (Baseline run $\rightarrow$ Shannon Entropy weight derivation $\rightarrow$ Entropy-weighted re-run $\rightarrow$ Side-by-side comparison $\rightarrow$ Capacity recommendations):
-
+### 3. Launch the Web Application (React + Vite)
 ```bash
-python main.py
+cd web
+npm install
+npm run dev
 ```
-
-### 4. Launch the Interactive Dashboard
-To launch the dark-themed intelligence dashboard locally:
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
+### 4. Optional: Streamlit Dashboard
+To launch the legacy dark-themed intelligence dashboard locally:
 
 ```bash
 python -m streamlit run dashboard/app.py
