@@ -55,8 +55,11 @@ const resourceMeta: Record<ResourceType, { label: string }> = {
   grid: { label: "Grid" },
 }
 
-function formatNumber(value: number, digits = 0) {
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value)
+function formatNumber(value: number | undefined | null, digits = 0) {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "0"
+  }
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(Number(value))
 }
 
 function MiniChart({
@@ -1627,7 +1630,11 @@ function ComparisonPage({
 
   const { abc, pso } = result
   const overallWinner = result.overallWinner || "ABC"
-  const metricWinner = (a: number, b: number) => (a === b ? "Tie" : a < b ? "ABC" : "PSO")
+  const metricWinner = (a: number | undefined, b: number | undefined) => {
+    const valA = Number(a) || 0
+    const valB = Number(b) || 0
+    return Math.abs(valA - valB) < 0.001 ? "Tie" : valA < valB ? "ABC" : "PSO"
+  }
 
   const exportResults = () => {
     const header =
@@ -1714,8 +1721,20 @@ function ComparisonPage({
 
       <div className="mb-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {[
-          { label: "Unmet energy", a: abc.unmetKwh, b: pso.unmetKwh, unit: "kWh", important: true },
-          { label: "Total daily cost", a: abc.cost, b: pso.cost, unit: "₹", important: true },
+          {
+            label: "Unmet energy",
+            a: abc.unmetKwh ?? abc.dispatch?.reduce((sum, d) => sum + (d.unmet || 0), 0) ?? 0,
+            b: pso.unmetKwh ?? pso.dispatch?.reduce((sum, d) => sum + (d.unmet || 0), 0) ?? 0,
+            unit: "kWh",
+            important: true,
+          },
+          {
+            label: "Total daily cost",
+            a: abc.cost ?? abc.totalCost ?? (abc.capitalCost + abc.operationalCost) ?? 0,
+            b: pso.cost ?? pso.totalCost ?? (pso.capitalCost + pso.operationalCost) ?? 0,
+            unit: "₹",
+            important: true,
+          },
           { label: "Objective fitness (F)", a: abc.objective, b: pso.objective, unit: "", important: false },
           { label: "Execution time", a: abc.executionSeconds, b: pso.executionSeconds, unit: "s", important: false },
         ].map((metric) => (

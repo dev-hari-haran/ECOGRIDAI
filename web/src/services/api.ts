@@ -118,6 +118,8 @@ export interface AlgorithmResult {
   dispatch: HourlyDispatch[]
   socTrajectory: number[]
   totalCost: number
+  cost?: number
+  unmetKwh?: number
   capitalCost: number
   operationalCost: number
   energyLossKwh: number
@@ -179,12 +181,14 @@ export interface OptimizationResponse {
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api"
 
+const hasCustomApiBase = Boolean(import.meta.env.VITE_API_BASE_URL)
+
 const isStaticHosting =
+  !hasCustomApiBase &&
   typeof window !== "undefined" &&
   (window.location.hostname.includes("netlify.app") ||
     window.location.hostname.includes("vercel.app") ||
-    window.location.hostname.includes("github.io") ||
-    window.location.hostname.includes("onrender.com"))
+    window.location.hostname.includes("github.io"))
 
 function handleFallback<T>(endpoint: string, options?: RequestInit): T {
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`

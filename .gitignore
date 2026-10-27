@@ -54,6 +54,9 @@ dist/
 # Pytest & Office
 .pytest_cache/
 ~$*.docx
+*.tmp
+*AutoRecovered*
+
 
 # Local Netlify folder
 .netlify

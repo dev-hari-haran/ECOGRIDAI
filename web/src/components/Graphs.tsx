@@ -2,11 +2,14 @@ import { useState, useRef } from "react"
 import { Badge, Button, Select } from "./ui/Primitives"
 import type { AlgorithmResult } from "../services/api"
 
-function formatNumber(value: number, digits = 0) {
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value)
+function formatNumber(value: number | undefined | null, digits = 0) {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "0"
+  }
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(Number(value))
 }
 
-function formatRupees(value: number) {
+function formatRupees(value: number | undefined | null) {
   return "₹" + formatNumber(value, 0)
 }
 
@@ -399,7 +402,9 @@ export function CostBreakdownChart({
   const [modalOpen, setModalOpen] = useState(false)
   const svgRef = useRef<SVGSVGElement | null>(null)
 
-  const maxCost = Math.max(abc.cost, pso.cost, 1000) * 1.2
+  const abcCost = abc.cost ?? abc.totalCost ?? (abc.capitalCost + abc.operationalCost) ?? 0
+  const psoCost = pso.cost ?? pso.totalCost ?? (pso.capitalCost + pso.operationalCost) ?? 0
+  const maxCost = Math.max(abcCost, psoCost, 1000) * 1.2
   const width = 640
   const height = 260
   const paddingLeft = 70
@@ -411,8 +416,8 @@ export function CostBreakdownChart({
   const barWidth = 64
 
   const algorithms = [
-    { name: "ABC Algorithm", capital: abc.capitalCost, operational: abc.operationalCost, total: abc.cost },
-    { name: "PSO Algorithm", capital: pso.capitalCost, operational: pso.operationalCost, total: pso.cost },
+    { name: "ABC Algorithm", capital: abc.capitalCost, operational: abc.operationalCost, total: abcCost },
+    { name: "PSO Algorithm", capital: pso.capitalCost, operational: pso.operationalCost, total: psoCost },
   ]
 
   return (

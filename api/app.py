@@ -644,9 +644,11 @@ def execute_optimization(req: OptimizeRequest) -> Dict[str, Any]:
 
     abc_result = {
         "name": "ABC",
+        "algorithm": "ABC",
         "dispatch": abc_dispatch_rows,
         "unmetKwh": abc_unmet,
         "cost": float(abc_tot["total_cost"]),
+        "totalCost": float(abc_tot["total_cost"]),
         "capitalCost": float(abc_tot["c_capital"]),
         "operationalCost": float(abc_tot["c_op"]),
         "energyLossKwh": float(abc_tot["total_loss"]),
@@ -671,9 +673,11 @@ def execute_optimization(req: OptimizeRequest) -> Dict[str, Any]:
 
     pso_result = {
         "name": "PSO",
+        "algorithm": "PSO",
         "dispatch": pso_dispatch_rows,
         "unmetKwh": pso_unmet,
         "cost": float(pso_tot["total_cost"]),
+        "totalCost": float(pso_tot["total_cost"]),
         "capitalCost": float(pso_tot["c_capital"]),
         "operationalCost": float(pso_tot["c_op"]),
         "energyLossKwh": float(pso_tot["total_loss"]),
