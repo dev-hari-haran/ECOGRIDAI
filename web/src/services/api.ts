@@ -179,16 +179,21 @@ export interface OptimizationResponse {
   completedAt: string
 }
 
-const rawBase = (import.meta.env.VITE_API_BASE_URL || "/api").trim().replace(/\/+$/, "")
-const API_BASE = rawBase.endsWith("/api") ? rawBase : `${rawBase}/api`
-const hasCustomApiBase = Boolean(import.meta.env.VITE_API_BASE_URL)
+const RENDER_BACKEND_URL = "https://ecogridai.onrender.com/api"
 
-const isStaticHosting =
-  !hasCustomApiBase &&
+const isLocalhost =
   typeof window !== "undefined" &&
-  (window.location.hostname.includes("netlify.app") ||
-    window.location.hostname.includes("vercel.app") ||
-    window.location.hostname.includes("github.io"))
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1")
+
+const rawBase = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (isLocalhost ? "/api" : RENDER_BACKEND_URL)
+)
+  .trim()
+  .replace(/\/+$/, "")
+
+export const API_BASE = rawBase.endsWith("/api") ? rawBase : `${rawBase}/api`
 
 function handleFallback<T>(endpoint: string, options?: RequestInit): T {
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`
@@ -307,13 +312,11 @@ function handleFallback<T>(endpoint: string, options?: RequestInit): T {
 }
 
 async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  // If hosted on Netlify, run directly on client simulation without making doomed HTTP call
-  if (isStaticHosting) {
-    return handleFallback<T>(endpoint, options)
-  }
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`
+  const url = `${API_BASE}${cleanEndpoint}`
 
-  const url = `${API_BASE}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`
   try {
+    console.log(`[EcoGrid API] Sending request to: ${url}`)
     const response = await fetch(url, {
       ...options,
       headers: {
@@ -323,11 +326,15 @@ async function apiRequest<T>(endpoint: string, options?: RequestInit): Promise<T
     })
 
     if (!response.ok) {
+      console.warn(`[EcoGrid API] ${url} returned ${response.status}. Using fallback.`)
       return handleFallback<T>(endpoint, options)
     }
 
-    return await response.json()
-  } catch {
+    const data = await response.json()
+    console.log(`[EcoGrid API] Response received from: ${url}`)
+    return data
+  } catch (err) {
+    console.warn(`[EcoGrid API] Network error connecting to ${url}:`, err)
     return handleFallback<T>(endpoint, options)
   }
 }
