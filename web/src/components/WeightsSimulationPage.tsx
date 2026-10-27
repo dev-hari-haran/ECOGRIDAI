@@ -2,8 +2,11 @@ import { useState } from "react"
 import { Badge, Button, Card, Heading, Input, Select } from "./ui/Primitives"
 import { Sliders, Activity, Sparkles, Calculator, Check, ArrowRight } from "lucide-react"
 
-function formatNumber(value: number, digits = 0) {
-  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(value)
+function formatNumber(value: number | undefined | null, digits = 0) {
+  if (value === undefined || value === null || Number.isNaN(Number(value))) {
+    return "0"
+  }
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(Number(value))
 }
 
 // 10 Scenarios Decision Matrix for Shannon Entropy calculation
@@ -467,27 +470,32 @@ export function WeightsSimulationPage() {
           </div>
         </div>
 
-        {/* Step-by-Step Cumulative Bar */}
-        <div className="mt-6 rounded-xl border border-cornsilk/15 bg-forest-mid/40 p-4">
-          <div className="mb-2 flex justify-between text-xs font-semibold">
-            <span>Scalar Fitness Contribution Breakdown</span>
-            <span className="font-mono text-caramel">F = {totalFitness.toFixed(4)}</span>
-          </div>
-          <div className="flex h-5 w-full overflow-hidden rounded-lg bg-forest/80 border border-cornsilk/20">
-            <div style={{ width: `${(termCap / totalFitness) * 100}%` }} className="bg-amber-500" title={`CapEx: ${termCap.toFixed(4)}`} />
-            <div style={{ width: `${(termOp / totalFitness) * 100}%` }} className="bg-emerald-500" title={`OpEx: ${termOp.toFixed(4)}`} />
-            <div style={{ width: `${(termLoss / totalFitness) * 100}%` }} className="bg-lime-500" title={`Loss: ${termLoss.toFixed(4)}`} />
-            <div style={{ width: `${(termUnmet / totalFitness) * 100}%` }} className="bg-red-500" title={`Unmet Deficit: ${termUnmet.toFixed(4)}`} />
-            <div style={{ width: `${(termCurtail / totalFitness) * 100}%` }} className="bg-purple-500" title={`Curtailment: ${termCurtail.toFixed(4)}`} />
-          </div>
-          <div className="mt-2 flex flex-wrap justify-between text-[10px] text-cornsilk/70">
-            <span className="text-amber-400">CapEx: {(termCap / totalFitness * 100).toFixed(1)}%</span>
-            <span className="text-emerald-400">OpEx: {(termOp / totalFitness * 100).toFixed(1)}%</span>
-            <span className="text-lime-400">Loss: {(termLoss / totalFitness * 100).toFixed(1)}%</span>
-            <span className="text-red-400 font-bold">Unmet Deficit: {(termUnmet / totalFitness * 100).toFixed(1)}%</span>
-            <span className="text-purple-400">Curtailment: {(termCurtail / totalFitness * 100).toFixed(1)}%</span>
-          </div>
-        </div>
+          {/* Step-by-Step Cumulative Bar */}
+        {(() => {
+          const safeFit = totalFitness > 0 ? totalFitness : 1
+          return (
+            <div className="mt-6 rounded-xl border border-cornsilk/15 bg-forest-mid/40 p-4">
+              <div className="mb-2 flex justify-between text-xs font-semibold">
+                <span>Scalar Fitness Contribution Breakdown</span>
+                <span className="font-mono text-caramel">F = {totalFitness.toFixed(4)}</span>
+              </div>
+              <div className="flex h-5 w-full overflow-hidden rounded-lg bg-forest/80 border border-cornsilk/20">
+                <div style={{ width: `${(termCap / safeFit) * 100}%` }} className="bg-amber-500" title={`CapEx: ${termCap.toFixed(4)}`} />
+                <div style={{ width: `${(termOp / safeFit) * 100}%` }} className="bg-emerald-500" title={`OpEx: ${termOp.toFixed(4)}`} />
+                <div style={{ width: `${(termLoss / safeFit) * 100}%` }} className="bg-lime-500" title={`Loss: ${termLoss.toFixed(4)}`} />
+                <div style={{ width: `${(termUnmet / safeFit) * 100}%` }} className="bg-red-500" title={`Unmet Deficit: ${termUnmet.toFixed(4)}`} />
+                <div style={{ width: `${(termCurtail / safeFit) * 100}%` }} className="bg-purple-500" title={`Curtailment: ${termCurtail.toFixed(4)}`} />
+              </div>
+              <div className="mt-2 flex flex-wrap justify-between text-[10px] text-cornsilk/70">
+                <span className="text-amber-400">CapEx: {(termCap / safeFit * 100).toFixed(1)}%</span>
+                <span className="text-emerald-400">OpEx: {(termOp / safeFit * 100).toFixed(1)}%</span>
+                <span className="text-lime-400">Loss: {(termLoss / safeFit * 100).toFixed(1)}%</span>
+                <span className="text-red-400 font-bold">Unmet Deficit: {(termUnmet / safeFit * 100).toFixed(1)}%</span>
+                <span className="text-purple-400">Curtailment: {(termCurtail / safeFit * 100).toFixed(1)}%</span>
+              </div>
+            </div>
+          )
+        })()}
       </div>
     </div>
   )

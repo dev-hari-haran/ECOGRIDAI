@@ -1719,50 +1719,100 @@ function ComparisonPage({
         </div>
       </Card>
 
-      <div className="mb-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
-        {[
+      {(() => {
+        const getUnmet = (alg: AlgorithmResult) => {
+          const val =
+            alg.unmetKwh ??
+            (alg as any).unmet_load_kwh ??
+            (alg as any).unmet_energy_kwh ??
+            (alg as any).total_unmet_load ??
+            alg.dispatch?.reduce((sum, d) => sum + (d.unmet || 0), 0) ??
+            0
+          return Number(val) || 0
+        }
+
+        const getCost = (alg: AlgorithmResult) => {
+          const val =
+            alg.cost ??
+            alg.totalCost ??
+            (alg as any).total_cost ??
+            ((alg.capitalCost || (alg as any).capital_cost || (alg as any).c_capital || 0) +
+             (alg.operationalCost || (alg as any).operational_cost || (alg as any).c_op || 0)) ??
+            0
+          return Number(val) || 0
+        }
+
+        const getObjective = (alg: AlgorithmResult) => {
+          const val = alg.objective ?? (alg as any).fitness ?? 0
+          return Number(val) || 0
+        }
+
+        const getTime = (alg: AlgorithmResult) => {
+          const val = alg.executionSeconds ?? (alg as any).computational_time ?? 0
+          return Number(val) || 0
+        }
+
+        const metrics = [
           {
             label: "Unmet energy",
-            a: abc.unmetKwh ?? abc.dispatch?.reduce((sum, d) => sum + (d.unmet || 0), 0) ?? 0,
-            b: pso.unmetKwh ?? pso.dispatch?.reduce((sum, d) => sum + (d.unmet || 0), 0) ?? 0,
+            a: getUnmet(abc),
+            b: getUnmet(pso),
             unit: "kWh",
             important: true,
           },
           {
             label: "Total daily cost",
-            a: abc.cost ?? abc.totalCost ?? (abc.capitalCost + abc.operationalCost) ?? 0,
-            b: pso.cost ?? pso.totalCost ?? (pso.capitalCost + pso.operationalCost) ?? 0,
+            a: getCost(abc),
+            b: getCost(pso),
             unit: "₹",
             important: true,
           },
-          { label: "Objective fitness (F)", a: abc.objective, b: pso.objective, unit: "", important: false },
-          { label: "Execution time", a: abc.executionSeconds, b: pso.executionSeconds, unit: "s", important: false },
-        ].map((metric) => (
-          <Card key={metric.label} variant={metric.important ? "elevated" : "default"} className="min-w-0 p-3 sm:p-4">
-            <div className="mb-3 text-xs font-semibold sm:mb-4">{metric.label}</div>
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div className="min-w-0 rounded-lg bg-caramel-tint p-2">
-                <div className="text-[10px] text-forest-muted">ABC</div>
-                <div className="mt-1 truncate font-mono text-xs font-bold sm:text-sm">
-                  {metric.unit === "₹" && "₹"}
-                  {formatNumber(metric.a, 1)} {metric.unit !== "₹" && metric.unit}
+          {
+            label: "Objective fitness (F)",
+            a: getObjective(abc),
+            b: getObjective(pso),
+            unit: "",
+            important: false,
+          },
+          {
+            label: "Execution time",
+            a: getTime(abc),
+            b: getTime(pso),
+            unit: "s",
+            important: false,
+          },
+        ]
+
+        return (
+          <div className="mb-5 grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+            {metrics.map((metric) => (
+              <Card key={metric.label} variant={metric.important ? "elevated" : "default"} className="min-w-0 p-3 sm:p-4">
+                <div className="mb-3 text-xs font-semibold sm:mb-4">{metric.label}</div>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <div className="min-w-0 rounded-lg bg-caramel-tint p-2">
+                    <div className="text-[10px] text-forest-muted">ABC</div>
+                    <div className="mt-1 truncate font-mono text-xs font-bold sm:text-sm">
+                      {metric.unit === "₹" && "₹"}
+                      {formatNumber(metric.a, 1)} {metric.unit !== "₹" && metric.unit}
+                    </div>
+                  </div>
+                  <div className="min-w-0 rounded-lg bg-olive-tint p-2">
+                    <div className="text-[10px] text-forest-muted">PSO</div>
+                    <div className="mt-1 truncate font-mono text-xs font-bold sm:text-sm">
+                      {metric.unit === "₹" && "₹"}
+                      {formatNumber(metric.b, 1)} {metric.unit !== "₹" && metric.unit}
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="min-w-0 rounded-lg bg-olive-tint p-2">
-                <div className="text-[10px] text-forest-muted">PSO</div>
-                <div className="mt-1 truncate font-mono text-xs font-bold sm:text-sm">
-                  {metric.unit === "₹" && "₹"}
-                  {formatNumber(metric.b, 1)} {metric.unit !== "₹" && metric.unit}
+                <div className="mt-3 text-[10px] font-semibold text-olive">
+                  {metricWinner(metric.a, metric.b)}{" "}
+                  {metricWinner(metric.a, metric.b) !== "Tie" && "wins"}
                 </div>
-              </div>
-            </div>
-            <div className="mt-3 text-[10px] font-semibold text-olive">
-              {metricWinner(metric.a, metric.b)}{" "}
-              {metricWinner(metric.a, metric.b) !== "Tie" && "wins"}
-            </div>
-          </Card>
-        ))}
-      </div>
+              </Card>
+            ))}
+          </div>
+        )
+      })()}
 
       {/* 1. Developed Graph: 24-Hour Stacked Dispatch Profile Chart */}
       <Card className="mb-5 p-4 sm:p-5">
