@@ -1662,7 +1662,7 @@ function ComparisonPage({
     const url = URL.createObjectURL(new Blob([[header, ...rows].join("\n")], { type: "text/csv" }))
     const link = document.createElement("a")
     link.href = url
-    link.download = `ecogrid-optimization-${result.scenario.name.toLowerCase().replaceAll(" ", "-")}.csv`
+    link.download = `ecogrid-optimization-${result.scenario.name.toLowerCase().replace(/\s+/g, "-")}.csv`
     link.click()
     URL.revokeObjectURL(url)
   }
@@ -1737,8 +1737,7 @@ function ComparisonPage({
             alg.totalCost ??
             (alg as any).total_cost ??
             ((alg.capitalCost || (alg as any).capital_cost || (alg as any).c_capital || 0) +
-             (alg.operationalCost || (alg as any).operational_cost || (alg as any).c_op || 0)) ??
-            0
+             (alg.operationalCost || (alg as any).operational_cost || (alg as any).c_op || 0))
           return Number(val) || 0
         }
 
@@ -2265,9 +2264,9 @@ export default function App() {
       setPreResult(result)
       setImplementedRec(rec.action)
     }
+    const updatedConfig = { ...config }
+    const updatedModifications = { ...modifications }
     try {
-      const updatedConfig = { ...config }
-      const updatedModifications = { ...modifications }
 
       if (rec.category.toLowerCase().includes("solar")) {
         const addedKw = rec.additional_capacity_kw || 3715.0

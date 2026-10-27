@@ -90,6 +90,7 @@ export interface ValidationResult {
     min_load_kw: number
     average_load_kw: number
   }
+  summary?: any
 }
 
 export interface Config {
@@ -112,6 +113,8 @@ export interface HourlyDispatch {
   curtailment?: number
   loss?: number
 }
+
+export type HourResult = HourlyDispatch;
 
 export interface AlgorithmResult {
   algorithm: "ABC" | "PSO"

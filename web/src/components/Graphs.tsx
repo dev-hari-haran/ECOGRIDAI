@@ -420,6 +420,16 @@ export function CostBreakdownChart({
     },
   ]
 
+  const width = 800
+  const height = 240
+  const paddingLeft = 70
+  const paddingRight = 40
+  const paddingTop = 20
+  const paddingBottom = 40
+  const plotWidth = width - paddingLeft - paddingRight
+  const plotHeight = height - paddingTop - paddingBottom
+  const barWidth = 90
+
   const maxCost =
     Math.max(
       abcCost,

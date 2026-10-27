@@ -56,18 +56,21 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   hasError?: boolean
 }
 
-export function Input({ hasError, className, ...props }: InputProps) {
-  return React.createElement('input', {
-    className: clsx(
-      'w-full rounded-lg border px-3 py-1.5 text-sm text-forest bg-cornsilk transition-colors focus:outline-none focus:ring-2',
-      hasError
-        ? 'border-danger focus:ring-danger/30 bg-danger-tint/40'
-        : 'border-olive/35 focus:border-olive focus:ring-olive/25',
-      className
-    ),
-    ...props,
-  })
-}
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ hasError, className, ...props }, ref) => {
+    return React.createElement('input', {
+      ref,
+      className: clsx(
+        'w-full rounded-lg border px-3 py-1.5 text-sm text-forest bg-cornsilk transition-colors focus:outline-none focus:ring-2',
+        hasError
+          ? 'border-danger focus:ring-danger/30 bg-danger-tint/40'
+          : 'border-olive/35 focus:border-olive focus:ring-olive/25',
+        className
+      ),
+      ...props,
+    })
+  }
+)
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   hasError?: boolean
