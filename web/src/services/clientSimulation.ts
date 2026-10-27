@@ -347,6 +347,7 @@ export function runClientDispatchSimulation(params: {
       battery: Math.round((batDis - batChg) * 10) / 10,
       grid: Math.round(gridImport * 10) / 10,
       unmet: Math.round(unmet * 10) / 10,
+      soc: Math.round(socPct * 10) / 10,
       curtailment: Math.round(curtailment * 10) / 10,
       loss: Math.round(hourLoss * 10) / 10,
     })

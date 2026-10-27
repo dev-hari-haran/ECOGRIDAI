@@ -402,23 +402,32 @@ export function CostBreakdownChart({
   const [modalOpen, setModalOpen] = useState(false)
   const svgRef = useRef<SVGSVGElement | null>(null)
 
-  const abcCost = abc.cost ?? abc.totalCost ?? (abc.capitalCost + abc.operationalCost) ?? 0
-  const psoCost = pso.cost ?? pso.totalCost ?? (pso.capitalCost + pso.operationalCost) ?? 0
-  const maxCost = Math.max(abcCost, psoCost, 1000) * 1.2
-  const width = 640
-  const height = 260
-  const paddingLeft = 70
-  const paddingRight = 30
-  const paddingTop = 30
-  const paddingBottom = 40
-
-  const plotHeight = height - paddingTop - paddingBottom
-  const barWidth = 64
+  const abcCost = Number(abc.cost ?? abc.totalCost ?? (abc.capitalCost + abc.operationalCost)) || 0
+  const psoCost = Number(pso.cost ?? pso.totalCost ?? (pso.capitalCost + pso.operationalCost)) || 0
 
   const algorithms = [
-    { name: "ABC Algorithm", capital: abc.capitalCost, operational: abc.operationalCost, total: abcCost },
-    { name: "PSO Algorithm", capital: pso.capitalCost, operational: pso.operationalCost, total: psoCost },
+    {
+      name: "ABC Algorithm",
+      capital: Number(abc.capitalCost ?? (abc as any).capital_cost ?? (abc as any).c_capital) || 0,
+      operational: Number(abc.operationalCost ?? (abc as any).operational_cost ?? (abc as any).c_op) || 0,
+      total: abcCost,
+    },
+    {
+      name: "PSO Algorithm",
+      capital: Number(pso.capitalCost ?? (pso as any).capital_cost ?? (pso as any).c_capital) || 0,
+      operational: Number(pso.operationalCost ?? (pso as any).operational_cost ?? (pso as any).c_op) || 0,
+      total: psoCost,
+    },
   ]
+
+  const maxCost =
+    Math.max(
+      abcCost,
+      psoCost,
+      algorithms[0].capital + algorithms[0].operational,
+      algorithms[1].capital + algorithms[1].operational,
+      1000
+    ) * 1.2
 
   return (
     <div className="space-y-3">
@@ -556,10 +565,14 @@ export function BatterySocChart({
   const plotHeight = height - paddingTop - paddingBottom
 
   const getX = (idx: number) => paddingLeft + (idx / 23) * plotWidth
-  const getY = (soc: number) => height - paddingBottom - (soc / 100) * plotHeight
+  const getY = (soc: number | undefined | null) => {
+    const val = Number(soc)
+    const safeSoc = !isNaN(val) && isFinite(val) ? Math.min(100, Math.max(0, val)) : 50
+    return height - paddingBottom - (safeSoc / 100) * plotHeight
+  }
 
-  const abcPoints = abc.dispatch.map((d, i) => `${getX(i)},${getY(d.soc)}`).join(" L ")
-  const psoPoints = pso.dispatch.map((d, i) => `${getX(i)},${getY(d.soc)}`).join(" L ")
+  const abcPoints = abc.dispatch.map((d, i) => `${getX(i)},${getY(d.soc ?? abc.socTrajectory?.[i])}`).join(" L ")
+  const psoPoints = pso.dispatch.map((d, i) => `${getX(i)},${getY(d.soc ?? pso.socTrajectory?.[i])}`).join(" L ")
 
   const hoveredAbc = hoverIndex !== null ? abc.dispatch[hoverIndex] : null
   const hoveredPso = hoverIndex !== null ? pso.dispatch[hoverIndex] : null
